@@ -1,23 +1,24 @@
 package com.jobportal.service;
 
 import com.jobportal.dto.JobRequest;
+import com.jobportal.dto.JobUpdateRequest;
 import com.jobportal.exception.CompanyNotFoundException;
+import com.jobportal.exception.JobNotFoundException;
 import com.jobportal.model.Company;
 import com.jobportal.model.Job;
 import com.jobportal.repository.CompanyRepository;
 import com.jobportal.repository.JobRepository;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import com.jobportal.exception.JobNotFoundException;
-import com.jobportal.dto.JobUpdateRequest;
-
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +27,8 @@ public class JobService {
     private final JobRepository jobRepository;
     private final CompanyRepository companyRepository;
 
+
+    // POST JOB
     public Job postJob(UUID companyId, JobRequest request) {
 
         Company company = companyRepository
@@ -46,58 +49,74 @@ public class JobService {
         job.setSalary(request.getSalary());
         job.setActive(true);
         job.setPostedAt(LocalDateTime.now());
+
         job.setCompany(company);
 
         return jobRepository.save(job);
     }
+
+
+    // SEARCH JOBS
     public Page<Job> searchJobs(
-            String jobTitle,
-            String location,
-            String skills,
+            String search,
             int page,
             int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        Specification<Job> specification = (root, query, criteriaBuilder) ->
-                criteriaBuilder.conjunction();
+        Specification<Job> specification =
+                (root, query, criteriaBuilder) ->
+                        criteriaBuilder.conjunction();
 
-        if (jobTitle != null && !jobTitle.isBlank()) {
+
+        // SINGLE SEARCH BAR
+        if (search != null && !search.isBlank()) {
+
+            String searchValue =
+                    "%" + search.toLowerCase() + "%";
+
             specification = specification.and(
                     (root, query, criteriaBuilder) ->
-                            criteriaBuilder.like(
-                                    criteriaBuilder.lower(
-                                            root.get("jobTitle")
+                            criteriaBuilder.or(
+
+                                    // Search by Job Title
+                                    criteriaBuilder.like(
+                                            criteriaBuilder.lower(
+                                                    root.get("jobTitle")
+                                            ),
+                                            searchValue
                                     ),
-                                    "%" + jobTitle.toLowerCase() + "%"
+
+                                    // Search by Location
+                                    criteriaBuilder.like(
+                                            criteriaBuilder.lower(
+                                                    root.get("location")
+                                            ),
+                                            searchValue
+                                    ),
+
+                                    // Search by Skills
+                                    criteriaBuilder.like(
+                                            criteriaBuilder.lower(
+                                                    root.get("skills")
+                                            ),
+                                            searchValue
+                                    ),
+
+                                    // Search by Company Name
+                                    criteriaBuilder.like(
+                                            criteriaBuilder.lower(
+                                                    root.get("company")
+                                                            .get("companyName")
+                                            ),
+                                            searchValue
+                                    )
                             )
             );
         }
 
-        if (location != null && !location.isBlank()) {
-            specification = specification.and(
-                    (root, query, criteriaBuilder) ->
-                            criteriaBuilder.like(
-                                    criteriaBuilder.lower(
-                                            root.get("location")
-                                    ),
-                                    "%" + location.toLowerCase() + "%"
-                            )
-            );
-        }
 
-        if (skills != null && !skills.isBlank()) {
-            specification = specification.and(
-                    (root, query, criteriaBuilder) ->
-                            criteriaBuilder.like(
-                                    criteriaBuilder.lower(
-                                            root.get("skills")
-                                    ),
-                                    "%" + skills.toLowerCase() + "%"
-                            )
-            );
-        }
-
+        // SHOW ONLY ACTIVE JOBS
         specification = specification.and(
                 (root, query, criteriaBuilder) ->
                         criteriaBuilder.equal(
@@ -106,14 +125,24 @@ public class JobService {
                         )
         );
 
-        return jobRepository.findAll(specification, pageable);
+        return jobRepository.findAll(
+                specification,
+                pageable
+        );
     }
-    public Job updateJob(UUID jobId, JobUpdateRequest request) {
+
+
+    // UPDATE JOB
+    public Job updateJob(
+            UUID jobId,
+            JobUpdateRequest request) {
 
         Job job = jobRepository
                 .findById(jobId)
                 .orElseThrow(() ->
-                        new JobNotFoundException("Job not found")
+                        new JobNotFoundException(
+                                "Job not found"
+                        )
                 );
 
         if (request.getJobTitle() != null) {
@@ -142,12 +171,17 @@ public class JobService {
 
         return jobRepository.save(job);
     }
+
+
+    // CLOSE JOB
     public Job closeJob(UUID jobId) {
 
         Job job = jobRepository
                 .findById(jobId)
                 .orElseThrow(() ->
-                        new JobNotFoundException("Job not found")
+                        new JobNotFoundException(
+                                "Job not found"
+                        )
                 );
 
         job.setActive(false);

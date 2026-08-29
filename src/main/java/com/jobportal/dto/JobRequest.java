@@ -1,6 +1,7 @@
 package com.jobportal.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
@@ -20,5 +21,10 @@ public class JobRequest {
 
     private String experience;
 
+    @NotBlank(message = "Salary is required")
+    @Pattern(
+            regexp = "^(Not Disclosed|[0-9]{1,2}(\\.[0-9]{1,2})?\\s?(LPA|CTC))$",
+            message = "Salary must be in a valid format, for example: 12 LPA or Not Disclosed"
+    )
     private String salary;
 }

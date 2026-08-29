@@ -36,16 +36,12 @@ public class JobRestController {
     }
     @GetMapping("/search")
     public ApiResponse<List<Job>> searchJobs(
-            @RequestParam(required = false) String jobTitle,
-            @RequestParam(required = false) String location,
-            @RequestParam(required = false) String skills,
+            @RequestParam(required = false) String search,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
         Page<Job> jobPage = jobService.searchJobs(
-                jobTitle,
-                location,
-                skills,
+                search,
                 page,
                 size
         );
@@ -67,7 +63,7 @@ public class JobRestController {
     @PutMapping("/{jobId}")
     public ApiResponse<Job> updateJob(
             @PathVariable UUID jobId,
-            @RequestBody JobUpdateRequest request) {
+            @Valid @RequestBody JobUpdateRequest request) {
 
         Job updatedJob = jobService.updateJob(jobId, request);
 

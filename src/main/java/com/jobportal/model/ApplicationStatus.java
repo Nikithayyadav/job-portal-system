@@ -1,4 +1,9 @@
 package com.jobportal.model;
 
-public class ApplicationStatus {
+public enum ApplicationStatus {
+
+    APPLIED,
+    SHORTLISTED,
+    REJECTED,
+    WITHDRAWN
 }

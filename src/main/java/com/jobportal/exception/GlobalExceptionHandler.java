@@ -54,4 +54,53 @@ public class GlobalExceptionHandler {
                         null
                 ));
     }
+
+    @ExceptionHandler(CandidateNotFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleCandidateNotFound(
+            CandidateNotFoundException ex) {
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponse<>(
+                        false,
+                        null,
+                        new ErrorResponse(ex.getMessage()),
+                        null
+                ));
+    }
+    @ExceptionHandler(CompanyNotFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleCompanyNotFound(
+            CompanyNotFoundException ex) {
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponse<>(
+                        false,
+                        null,
+                        new ErrorResponse(ex.getMessage()),
+                        null
+                ));
+    }
+    @ExceptionHandler(JobNotFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleJobNotFound(
+            JobNotFoundException ex) {
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponse<>(
+                        false,
+                        null,
+                        new ErrorResponse(ex.getMessage()),
+                        null
+                ));
+    }
+    @ExceptionHandler(AlreadyAppliedException.class)
+    public ResponseEntity<ApiResponse<Object>> handleAlreadyApplied(
+            AlreadyAppliedException ex) {
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponse<>(
+                        false,
+                        null,
+                        new ErrorResponse(ex.getMessage()),
+                        null
+                ));
+    }
 }

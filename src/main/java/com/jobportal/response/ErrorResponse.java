@@ -1,6 +1,6 @@
 package com.jobportal.response;
 
-import lombok.AllArgsConstructor;
+import lombok.AllArgsConstructor; 
 import lombok.Data;
 
 @Data 

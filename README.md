@@ -24,7 +24,7 @@ The system manages the complete job application flow, including job posting, sea
 - Spring Boot
 - Spring Data JPA 
 - Hibernate
-- MySQL
+- MySQL 
 - Maven
 - Lombok
 - Jakarta Validation

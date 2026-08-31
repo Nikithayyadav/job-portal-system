@@ -22,7 +22,7 @@ The system manages the complete job application flow, including job posting, sea
 
 - Java
 - Spring Boot
-- Spring Data JPA
+- Spring Data JPA 
 - Hibernate
 - MySQL
 - Maven

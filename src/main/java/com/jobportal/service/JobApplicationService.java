@@ -12,6 +12,8 @@ import com.jobportal.repository.JobApplicationRepository;
 import com.jobportal.repository.JobRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import java.util.List;
+import com.jobportal.exception.CandidateNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -76,5 +78,75 @@ public class JobApplicationService {
         return jobApplicationRepository.save(
                 application
         );
+    }
+    public JobApplication withdrawApplication(
+            UUID applicationId) {
+
+        JobApplication application = jobApplicationRepository
+                .findById(applicationId)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Application not found"
+                        )
+                );
+
+        application.setStatus(
+                ApplicationStatus.WITHDRAWN
+        );
+
+        return jobApplicationRepository.save(application);
+    }
+    public JobApplication getApplicationStatus(
+            UUID applicationId) {
+
+        return jobApplicationRepository
+                .findById(applicationId)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Application not found"
+                        )
+                );
+    }
+    public List<JobApplication> getApplicationHistory(
+            UUID candidateId) {
+
+        if (!candidateRepository.existsById(candidateId)) {
+            throw new CandidateNotFoundException(
+                    "Candidate not found"
+            );
+        }
+
+        return jobApplicationRepository
+                .findByCandidateId(candidateId);
+    }
+    public List<JobApplication> getApplicantsByJob(
+            UUID jobId) {
+
+        if (!jobRepository.existsById(jobId)) {
+            throw new JobNotFoundException(
+                    "Job not found"
+            );
+        }
+
+        return jobApplicationRepository
+                .findByJobId(jobId);
+    }
+    public JobApplication shortlistCandidate(
+            UUID applicationId) {
+
+        JobApplication application =
+                jobApplicationRepository
+                        .findById(applicationId)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Application not found"
+                                )
+                        );
+
+        application.setStatus(
+                ApplicationStatus.SHORTLISTED
+        );
+
+        return jobApplicationRepository.save(application);
     }
 }

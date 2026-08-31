@@ -1,4 +1,4 @@
-# Job Portal System    
+# Job Portal System     
   
 A backend-based **Job Portal System** developed using **Java Spring Boot**. This application provides functionality for candidates and companies to manage the job recruitment process.
 

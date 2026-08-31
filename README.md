@@ -8,7 +8,7 @@ Companies can register, post jobs, update job details, close jobs, view applican
 
 ---
 
-## Problem Statement  
+## Problem Statement   
 
 The Job Portal System is designed to provide a centralized platform that connects job candidates with companies.
 

@@ -1,11 +1,11 @@
 package com.jobportal.response;
 
-import lombok.AllArgsConstructor;
+import lombok.AllArgsConstructor;  
 import lombok.Data;
-
-@Data
+ 
+@Data 
 @AllArgsConstructor
-public class ErrorResponse {
+public class ErrorResponse { 
 
     private String message;
 }

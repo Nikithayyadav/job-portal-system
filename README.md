@@ -16,7 +16,7 @@ Candidates can search and apply for suitable job opportunities, while companies 
 
 The system manages the complete job application flow, including job posting, searching, applying, saving jobs, application tracking, withdrawing applications, and shortlisting candidates.
 
----
+--- 
 
 ## Technologies Used
 

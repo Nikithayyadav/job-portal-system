@@ -20,7 +20,7 @@ The system manages the complete job application flow, including job posting, sea
 
 ## Technologies Used 
 
-- Java
+- Java 
 - Spring Boot
 - Spring Data JPA 
 - Hibernate

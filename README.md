@@ -6,7 +6,7 @@ Candidates can register, create and update their profiles, search for jobs, appl
 
 Companies can register, post jobs, update job details, close jobs, view applicants, and shortlist candidates. 
 
----
+--- 
   
 ## Problem Statement    
 

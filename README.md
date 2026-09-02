@@ -1,7 +1,7 @@
 # Job Portal System        
    
 A backend-based **Job Portal System** developed using **Java Spring Boot**. This application provides functionality for candidates and companies to manage the job recruitment process.
-
+ 
 Candidates can register, create and update their profiles, search for jobs, apply for jobs, save jobs, withdraw applications, and track their application status. 
 
 Companies can register, post jobs, update job details, close jobs, view applicants, and shortlist candidates.

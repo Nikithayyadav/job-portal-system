@@ -56,9 +56,14 @@ public class JobService {
     }
 
 
-    // SEARCH JOBS
+    // SEARCH + FILTER JOBS
     public Page<Job> searchJobs(
             String search,
+            String location,
+            String skills,
+            String experience,
+            String companyName,
+            String salary,
             int page,
             int size) {
 
@@ -69,7 +74,7 @@ public class JobService {
                         criteriaBuilder.conjunction();
 
 
-        // SINGLE SEARCH BAR
+        // GLOBAL SEARCH
         if (search != null && !search.isBlank()) {
 
             String searchValue =
@@ -79,7 +84,7 @@ public class JobService {
                     (root, query, criteriaBuilder) ->
                             criteriaBuilder.or(
 
-                                    // Search by Job Title
+                                    // Job Title
                                     criteriaBuilder.like(
                                             criteriaBuilder.lower(
                                                     root.get("jobTitle")
@@ -87,7 +92,15 @@ public class JobService {
                                             searchValue
                                     ),
 
-                                    // Search by Location
+                                    // Job Description
+                                    criteriaBuilder.like(
+                                            criteriaBuilder.lower(
+                                                    root.get("description")
+                                            ),
+                                            searchValue
+                                    ),
+
+                                    // Location
                                     criteriaBuilder.like(
                                             criteriaBuilder.lower(
                                                     root.get("location")
@@ -95,7 +108,7 @@ public class JobService {
                                             searchValue
                                     ),
 
-                                    // Search by Skills
+                                    // Skills
                                     criteriaBuilder.like(
                                             criteriaBuilder.lower(
                                                     root.get("skills")
@@ -103,7 +116,7 @@ public class JobService {
                                             searchValue
                                     ),
 
-                                    // Search by Company Name
+                                    // Company Name
                                     criteriaBuilder.like(
                                             criteriaBuilder.lower(
                                                     root.get("company")
@@ -111,6 +124,97 @@ public class JobService {
                                             ),
                                             searchValue
                                     )
+                            )
+            );
+        }
+
+
+        // FILTER BY LOCATION
+        if (location != null && !location.isBlank()) {
+
+            String filterValue =
+                    "%" + location.toLowerCase() + "%";
+
+            specification = specification.and(
+                    (root, query, criteriaBuilder) ->
+                            criteriaBuilder.like(
+                                    criteriaBuilder.lower(
+                                            root.get("location")
+                                    ),
+                                    filterValue
+                            )
+            );
+        }
+
+
+        // FILTER BY SKILLS
+        if (skills != null && !skills.isBlank()) {
+
+            String filterValue =
+                    "%" + skills.toLowerCase() + "%";
+
+            specification = specification.and(
+                    (root, query, criteriaBuilder) ->
+                            criteriaBuilder.like(
+                                    criteriaBuilder.lower(
+                                            root.get("skills")
+                                    ),
+                                    filterValue
+                            )
+            );
+        }
+
+
+        // FILTER BY EXPERIENCE
+        if (experience != null && !experience.isBlank()) {
+
+            String filterValue =
+                    "%" + experience.toLowerCase() + "%";
+
+            specification = specification.and(
+                    (root, query, criteriaBuilder) ->
+                            criteriaBuilder.like(
+                                    criteriaBuilder.lower(
+                                            root.get("experience")
+                                    ),
+                                    filterValue
+                            )
+            );
+        }
+
+
+        // FILTER BY COMPANY NAME
+        if (companyName != null && !companyName.isBlank()) {
+
+            String filterValue =
+                    "%" + companyName.toLowerCase() + "%";
+
+            specification = specification.and(
+                    (root, query, criteriaBuilder) ->
+                            criteriaBuilder.like(
+                                    criteriaBuilder.lower(
+                                            root.get("company")
+                                                    .get("companyName")
+                                    ),
+                                    filterValue
+                            )
+            );
+        }
+
+
+        // FILTER BY SALARY
+        if (salary != null && !salary.isBlank()) {
+
+            String filterValue =
+                    "%" + salary.toLowerCase() + "%";
+
+            specification = specification.and(
+                    (root, query, criteriaBuilder) ->
+                            criteriaBuilder.like(
+                                    criteriaBuilder.lower(
+                                            root.get("salary")
+                                    ),
+                                    filterValue
                             )
             );
         }
@@ -125,13 +229,12 @@ public class JobService {
                         )
         );
 
+
         return jobRepository.findAll(
                 specification,
                 pageable
         );
     }
-
-
     // UPDATE JOB
     public Job updateJob(
             UUID jobId,

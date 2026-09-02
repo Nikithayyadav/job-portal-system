@@ -12,8 +12,12 @@ import com.jobportal.repository.JobApplicationRepository;
 import com.jobportal.repository.JobRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import com.jobportal.exception.ApplicationNotAvailableException;
 import java.util.List;
 import com.jobportal.exception.CandidateNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -107,8 +111,10 @@ public class JobApplicationService {
                         )
                 );
     }
-    public List<JobApplication> getApplicationHistory(
-            UUID candidateId) {
+    public Page<JobApplication> getApplicationHistory(
+            UUID candidateId,
+            int page,
+            int size) {
 
         if (!candidateRepository.existsById(candidateId)) {
             throw new CandidateNotFoundException(
@@ -116,11 +122,19 @@ public class JobApplicationService {
             );
         }
 
+        Pageable pageable =
+                PageRequest.of(page, size);
+
         return jobApplicationRepository
-                .findByCandidateId(candidateId);
+                .findByCandidateId(
+                        candidateId,
+                        pageable
+                );
     }
-    public List<JobApplication> getApplicantsByJob(
-            UUID jobId) {
+    public Page<JobApplication> getApplicantsByJob(
+            UUID jobId,
+            int page,
+            int size) {
 
         if (!jobRepository.existsById(jobId)) {
             throw new JobNotFoundException(
@@ -128,8 +142,14 @@ public class JobApplicationService {
             );
         }
 
+        Pageable pageable =
+                PageRequest.of(page, size);
+
         return jobApplicationRepository
-                .findByJobId(jobId);
+                .findByJobId(
+                        jobId,
+                        pageable
+                );
     }
     public JobApplication shortlistCandidate(
             UUID applicationId) {
@@ -142,6 +162,14 @@ public class JobApplicationService {
                                         "Application not found"
                                 )
                         );
+
+        if (application.getStatus()
+                == ApplicationStatus.WITHDRAWN) {
+
+            throw new ApplicationNotAvailableException(
+                    "Application is no longer available"
+            );
+        }
 
         application.setStatus(
                 ApplicationStatus.SHORTLISTED

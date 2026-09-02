@@ -1,9 +1,10 @@
 package com.jobportal.repository;
 
 import com.jobportal.model.JobApplication;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface JobApplicationRepository
@@ -14,6 +15,13 @@ public interface JobApplicationRepository
             UUID jobId
     );
 
-    List<JobApplication> findByCandidateId(UUID candidateId);
-    List<JobApplication> findByJobId(UUID jobId);
+    Page<JobApplication> findByCandidateId(
+            UUID candidateId,
+            Pageable pageable
+    );
+
+    Page<JobApplication> findByJobId(
+            UUID jobId,
+            Pageable pageable
+    );
 }

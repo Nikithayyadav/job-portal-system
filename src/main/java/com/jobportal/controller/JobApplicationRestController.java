@@ -6,7 +6,8 @@ import com.jobportal.service.JobApplicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-
+import com.jobportal.response.PageMeta;
+import org.springframework.data.domain.Page;
 import java.util.UUID;
 
 @RestController
@@ -65,32 +66,66 @@ public class JobApplicationRestController {
     }
     @GetMapping("/candidate/{candidateId}/history")
     public ApiResponse<List<JobApplication>> getApplicationHistory(
-            @PathVariable UUID candidateId) {
+            @PathVariable UUID candidateId,
 
-        List<JobApplication> applications =
+            @RequestParam(defaultValue = "0")
+            int page,
+
+            @RequestParam(defaultValue = "10")
+            int size) {
+
+        Page<JobApplication> applicationPage =
                 jobApplicationService
-                        .getApplicationHistory(candidateId);
+                        .getApplicationHistory(
+                                candidateId,
+                                page,
+                                size
+                        );
+
+        PageMeta meta = new PageMeta(
+                applicationPage.getNumber(),
+                applicationPage.getSize(),
+                applicationPage.getTotalElements(),
+                applicationPage.getTotalPages()
+        );
 
         return new ApiResponse<>(
                 true,
-                applications,
+                applicationPage.getContent(),
                 null,
-                null
+                meta
         );
     }
     @GetMapping("/job/{jobId}/applicants")
     public ApiResponse<List<JobApplication>> getApplicantsByJob(
-            @PathVariable UUID jobId) {
+            @PathVariable UUID jobId,
 
-        List<JobApplication> applicants =
+            @RequestParam(defaultValue = "0")
+            int page,
+
+            @RequestParam(defaultValue = "10")
+            int size) {
+
+        Page<JobApplication> applicantsPage =
                 jobApplicationService
-                        .getApplicantsByJob(jobId);
+                        .getApplicantsByJob(
+                                jobId,
+                                page,
+                                size
+                        );
+
+        PageMeta meta = new PageMeta(
+                applicantsPage.getNumber(),
+                applicantsPage.getSize(),
+                applicantsPage.getTotalElements(),
+                applicantsPage.getTotalPages()
+        );
 
         return new ApiResponse<>(
                 true,
-                applicants,
+                applicantsPage.getContent(),
                 null,
-                null
+                meta
         );
     }
     @PutMapping("/{applicationId}/shortlist")

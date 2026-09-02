@@ -103,4 +103,20 @@ public class GlobalExceptionHandler {
                         null
                 ));
     }
+    @ExceptionHandler(ApplicationNotAvailableException.class)
+    public ResponseEntity<ApiResponse<Void>>
+    handleApplicationNotAvailable(
+            ApplicationNotAvailableException exception) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(
+                        new ApiResponse<>(
+                                false,
+                                null,
+                                exception.getMessage(),
+                                null
+                        )
+                );
+    }
 }

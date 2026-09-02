@@ -1,5 +1,4 @@
 package com.jobportal.controller;
-
 import com.jobportal.dto.JobRequest;
 import com.jobportal.model.Job;
 import com.jobportal.response.ApiResponse;
@@ -36,12 +35,37 @@ public class JobRestController {
     }
     @GetMapping("/search")
     public ApiResponse<List<Job>> searchJobs(
-            @RequestParam(required = false) String search,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(required = false)
+            String search,
+
+            @RequestParam(required = false)
+            String location,
+
+            @RequestParam(required = false)
+            String skills,
+
+            @RequestParam(required = false)
+            String experience,
+
+            @RequestParam(required = false)
+            String companyName,
+
+            @RequestParam(required = false)
+            String salary,
+
+            @RequestParam(defaultValue = "0")
+            int page,
+
+            @RequestParam(defaultValue = "10")
+            int size) {
 
         Page<Job> jobPage = jobService.searchJobs(
                 search,
+                location,
+                skills,
+                experience,
+                companyName,
+                salary,
                 page,
                 size
         );

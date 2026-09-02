@@ -2,10 +2,12 @@ package com.jobportal.controller;
 
 import com.jobportal.model.SavedJob;
 import com.jobportal.response.ApiResponse;
+import com.jobportal.response.PageMeta;
 import com.jobportal.service.SavedJobService;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,19 +39,36 @@ public class SavedJobController {
     }
 
 
-    // GET ALL SAVED JOBS
+    // GET SAVED JOBS WITH PAGINATION
     @GetMapping("/{candidateId}/saved-jobs")
     public ApiResponse<List<SavedJob>> getSavedJobs(
-            @PathVariable UUID candidateId) {
+            @PathVariable UUID candidateId,
 
-        List<SavedJob> savedJobs =
-                savedJobService.getSavedJobs(candidateId);
+            @RequestParam(defaultValue = "0")
+            int page,
+
+            @RequestParam(defaultValue = "10")
+            int size) {
+
+        Page<SavedJob> savedJobPage =
+                savedJobService.getSavedJobs(
+                        candidateId,
+                        page,
+                        size
+                );
+
+        PageMeta meta = new PageMeta(
+                savedJobPage.getNumber(),
+                savedJobPage.getSize(),
+                savedJobPage.getTotalElements(),
+                savedJobPage.getTotalPages()
+        );
 
         return new ApiResponse<>(
                 true,
-                savedJobs,
+                savedJobPage.getContent(),
                 null,
-                null
+                meta
         );
     }
 }

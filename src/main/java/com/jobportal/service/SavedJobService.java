@@ -10,10 +10,13 @@ import com.jobportal.repository.JobRepository;
 import com.jobportal.repository.SavedJobRepository;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -47,7 +50,10 @@ public class SavedJobService {
                 );
 
         if (savedJobRepository
-                .existsByCandidateIdAndJobId(candidateId, jobId)) {
+                .existsByCandidateIdAndJobId(
+                        candidateId,
+                        jobId
+                )) {
 
             throw new RuntimeException(
                     "Job is already saved by this candidate"
@@ -64,9 +70,11 @@ public class SavedJobService {
     }
 
 
-    // GET SAVED JOBS
-    public List<SavedJob> getSavedJobs(
-            UUID candidateId) {
+    // GET SAVED JOBS WITH PAGINATION
+    public Page<SavedJob> getSavedJobs(
+            UUID candidateId,
+            int page,
+            int size) {
 
         if (!candidateRepository.existsById(candidateId)) {
 
@@ -75,7 +83,13 @@ public class SavedJobService {
             );
         }
 
+        Pageable pageable =
+                PageRequest.of(page, size);
+
         return savedJobRepository
-                .findByCandidateId(candidateId);
+                .findByCandidateId(
+                        candidateId,
+                        pageable
+                );
     }
 }
